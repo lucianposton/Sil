@@ -72,7 +72,7 @@ static bool game_in_progress = FALSE;
 /*
  * Number of active terms
  */
-static int num_term = 1;
+static int num_term = 8;
 
 
 /*
