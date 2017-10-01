@@ -1035,6 +1035,7 @@ static void process_command(void)
 		}
 			
 		/* Toggle stealth mode */
+		case '+':
 		case 'S':
 		{
 			do_cmd_toggle_stealth();
@@ -1153,6 +1154,7 @@ static void process_command(void)
 		}
 
         /* Throw an automatically chosen item at nearest target */
+		case '-':
 		case KTRL('T'):
 		{
 			do_cmd_throw(TRUE);
@@ -1198,6 +1200,7 @@ static void process_command(void)
 		}
 
 		/* Look around */
+		case 'v':
 		case 'l':
 		{
 			do_cmd_look();
