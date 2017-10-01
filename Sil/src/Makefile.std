@@ -114,15 +114,15 @@ CC = gcc
 ##
 ## Standard -- "main-x11.c" & "main-gcu.c"
 ##
-CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU"
-LIBS = -lX11 -lcurses
+#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU"
+#LIBS = -lX11 -lcurses -ltinfo
 
 
 ##
 ## Variation -- "main-x11.c" & "main-gcu.c" (for Mac OS X)
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU"
-#LIBS = -L/usr/X11/lib -lX11 -lcurses
+#LIBS = -L/usr/X11/lib -lX11 -lcurses -ltinfo
 
 
 ##
@@ -143,15 +143,15 @@ LIBS = -lX11 -lcurses
 ## Variation -- "main-gcu.c"
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU"
-#LIBS = -lcurses
+#LIBS = -lcurses -ltinfo
 
 
 ##
 ## Variation -- "main-gtk.c" & "main-gcu.c"
 ## Note: gtk-config adds GTK and X11 includes and libraries as appropriate.
 ##
-#CFLAGS = -Wall -O `gtk-config --cflags` -g -D"USE_GTK" -D"USE_GCU"
-#LIBS = `gtk-config --libs` -lcurses
+#CFLAGS = -Wall -O `pkg-config --cflags gtk+-2.0` -g -D"USE_GTK" -D"USE_GCU"
+#LIBS = `pkg-config --libs gtk+-2.0` -lcurses -ltinfo
 
 
 ##
@@ -173,10 +173,10 @@ LIBS = -lX11 -lcurses
 ## Allows the use of Sil in the console using ncurses,
 ## as well as under X11.
 ##
-#CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses -Wall \
-#         -O2 -fno-strength-reduce \
-#         -D"USE_X11" -D"USE_GCU" -D"USE_NCURSES"
-#LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lncurses
+CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses -Wall \
+         -O2 -fno-strength-reduce \
+         -D"USE_X11" -D"USE_GCU" -D"USE_NCURSES"
+LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lncurses -ltinfo
 
 
 ##
@@ -185,7 +185,7 @@ LIBS = -lX11 -lcurses
 ## Allows the use of Sil in the console using curses.
 ##
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -D"USE_GCU"
-#LIBS = -lcurses
+#LIBS = -lcurses -ltinfo
 
 
 ##
@@ -204,7 +204,7 @@ LIBS = -lX11 -lcurses
 #         -Wall -O2 -fno-strength-reduce -fomit-frame-pointer \
 #         -D"USE_X11" -D"USE_GCU" \
 #         -D"USE_TPOSIX" -D"USE_CURS_SET"
-#LIBS = -lX11 -lncurses
+#LIBS = -lX11 -lncurses -ltinfo
 #LDFLAGS = -s
 
 
