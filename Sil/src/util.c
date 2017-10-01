@@ -2383,6 +2383,11 @@ static u16b *message__type;
  */
 static u16b *message__count;
 
+/*
+ * The array[MESSAGE_MAX] of s32b for the turn the message occurred
+ */
+static s32b *message__playerturn;
+
 
 /*
  * Table of colors associated to message-types
@@ -2526,7 +2531,22 @@ static byte message_type_color(u16b type)
  */
 byte message_color(s16b age)
 {
-	return message_type_color(message_type(age));
+    const u16b mtype = message_type(age);
+    byte color = message_type_color(mtype);
+    if ((age < 0) || (age >= message_num())) return color;
+
+    const s16b idx = message_age2idx(age);
+    const int diff = playerturn - message__playerturn[idx];
+    if (diff > 2)
+    {
+        color = TERM_L_DARK;
+    }
+    else if (diff > 1)
+    {
+        color = TERM_SLATE;
+    }
+
+    return color;
 }
 
 
@@ -2594,6 +2614,8 @@ void message_add(cptr str, u16b type)
 		/* Increase the message count */
 		message__count[x]++;
 
+        message__playerturn[x] = playerturn;
+
 		/* Success */
 		return;
 	}
@@ -2658,6 +2680,8 @@ void message_add(cptr str, u16b type)
 
 		/* Store the message count */
 		message__count[x] = 1;
+
+        message__playerturn[x] = playerturn;
 
 		/* Success */
 		return;
@@ -2760,6 +2784,8 @@ void message_add(cptr str, u16b type)
 
 	/* Store the message count */
 	message__count[x] = 1;
+
+    message__playerturn[x] = playerturn;
 }
 
 
@@ -2773,6 +2799,7 @@ errr messages_init(void)
 	C_MAKE(message__buf, MESSAGE_BUF, char);
 	C_MAKE(message__type, MESSAGE_MAX, u16b);
 	C_MAKE(message__count, MESSAGE_MAX, u16b);
+	C_MAKE(message__playerturn, MESSAGE_MAX, s32b);
 
 	/* Init the message colors to white */
 	(void)C_BSET(message__color, TERM_WHITE, MSG_MAX, byte);
@@ -2795,6 +2822,7 @@ void messages_free(void)
 	FREE(message__buf);
 	FREE(message__type);
 	FREE(message__count);
+	FREE(message__playerturn);
 }
 
 
