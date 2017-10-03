@@ -3010,6 +3010,7 @@ void play_game(bool new_game)
 		/* Roll up a new character */
 		if (!player_birth())
         {
+            character_icky--;
             return;
         }
 		
