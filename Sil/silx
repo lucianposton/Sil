@@ -2,7 +2,9 @@
 
 # Describe attempt
 echo "Launching Sil..."
-sleep 2
+
+#How many windows do you want?
+SIL_WIN_NUM=8
 
 # Main window
 SIL_X11_FONT_0=10x20;   export SIL_X11_FONT_0
@@ -37,10 +39,29 @@ SIL_X11_AT_Y_4=519;     export SIL_X11_AT_Y_4
 SIL_X11_COLS_4=133;     export SIL_X11_COLS_4
 SIL_X11_ROWS_4=21;      export SIL_X11_ROWS_4
 
-# Could add more windows here...
+# Character Sheet window
+SIL_X11_FONT_3=6x12;    export SIL_X11_FONT_3
+SIL_X11_AT_X_3=810;     export SIL_X11_AT_X_3
+SIL_X11_AT_Y_3=600;     export SIL_X11_AT_Y_3
+SIL_X11_COLS_3=70;      export SIL_X11_COLS_3
+SIL_X11_ROWS_3=18;      export SIL_X11_ROWS_3
+
+# Messages window
+SIL_X11_FONT_3=6x12;    export SIL_X11_FONT_3
+SIL_X11_AT_X_3=810;     export SIL_X11_AT_X_3
+SIL_X11_AT_Y_3=650;     export SIL_X11_AT_Y_3
+SIL_X11_COLS_3=70;      export SIL_X11_COLS_3
+SIL_X11_ROWS_3=18;      export SIL_X11_ROWS_3
+
+# Monster List window
+SIL_X11_FONT_3=6x12;    export SIL_X11_FONT_3
+SIL_X11_AT_X_3=810;     export SIL_X11_AT_X_3
+SIL_X11_AT_Y_3=700;     export SIL_X11_AT_Y_3
+SIL_X11_COLS_3=70;      export SIL_X11_COLS_3
+SIL_X11_ROWS_3=18;      export SIL_X11_ROWS_3
 
 # Gamma correction
-SIL_X11_GAMMA=142;      export SIL_X11_GAMMA
+#SIL_X11_GAMMA=142;      export SIL_X11_GAMMA
 
 # Launch SIL
-./sil -mx11 -- -n5 &
+./sil -mx11 -- -n"${SIL_WIN_NUM}" &
