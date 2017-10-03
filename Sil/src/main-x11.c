@@ -841,6 +841,7 @@ static errr Infowin_impell(int x, int y)
 	return (0);
 }
 
+#ifndef IGNORE_UNUSED_FUNCTIONS
 
 /*
  * Resize an infowin
@@ -855,7 +856,6 @@ static errr Infowin_resize(int w, int h)
 }
 
 
-#ifndef IGNORE_UNUSED_FUNCTIONS
 
 /*
  * Move and Resize an infowin
@@ -2101,14 +2101,6 @@ static errr CheckEvent(bool wait)
 
 			/* Resize the Term (if needed) */
 			(void)Term_resize(cols, rows);
-
-			/* Resize the windows if any "change" is needed */
-			if ((Infowin->w != wid) || (Infowin->h != hgt))
-			{
-				/* Resize window */
-				Infowin_set(td->win);
-				Infowin_resize(wid, hgt);
-			}
 
 			break;
 		}
