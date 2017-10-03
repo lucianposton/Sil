@@ -151,7 +151,7 @@ CC = gcc
 ## Note: gtk-config adds GTK and X11 includes and libraries as appropriate.
 ##
 #CFLAGS = -Wall -O `pkg-config --cflags gtk+-2.0` -g -D"USE_GTK" -D"USE_GCU"
-#LIBS = `pkg-config --libs gtk+-2.0` -lcurses -ltinfo
+#LIBS = `pkg-config --libs gtk+-2.0` -lX11 -lcurses -ltinfo
 
 
 ##

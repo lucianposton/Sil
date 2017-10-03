@@ -360,40 +360,10 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 }
 
 
-static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
-{
-	GtkWidget *font_selector;
-
-	gchar *spacings[] = { "c", "m", NULL };
-
-	font_selector = gtk_font_selection_dialog_new("Select font");
-
-	gtk_object_set_data(GTK_OBJECT(font_selector), "term_data", user_data);
-
-	/* Filter to show only fixed-width fonts */
-	gtk_font_selection_dialog_set_filter(GTK_FONT_SELECTION_DIALOG(font_selector),
-	                                    GTK_FONT_FILTER_BASE, GTK_FONT_ALL,
-	                                    NULL, NULL, NULL, NULL, spacings, NULL);
-
-	gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->ok_button),
-	                   "clicked", font_ok_callback, (gpointer)font_selector);
-
-	/* Ensure that the dialog box is destroyed when the user clicks a button. */
-	gtk_signal_connect_object(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->ok_button),
-	                          "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
-	                          (gpointer)font_selector);
-
-	gtk_signal_connect_object(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->cancel_button),
-	                          "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
-	                         (gpointer)font_selector);
-
-	gtk_widget_show(GTK_WIDGET(font_selector));
-}
-
 
 static void file_ok_callback(GtkWidget *widget, GtkWidget *file_selector)
 {
-	char *f = gtk_file_selection_get_filename(GTK_FILE_SELECTION(file_selector));
+	const char *f = gtk_file_selection_get_filename(GTK_FILE_SELECTION(file_selector));
 
 	my_strcpy(savefile, f, sizeof(savefile));
 
@@ -671,13 +641,11 @@ static void init_gtk_window(term_data *td, int i)
 		file_exit_item = gtk_menu_item_new_with_label("Exit");
 		options_item = gtk_menu_item_new_with_label("Options");
 		options_menu = gtk_menu_new();
-		options_font_item = gtk_menu_item_new_with_label("Font");
 
 		/* Register callbacks */
 		gtk_signal_connect(GTK_OBJECT(file_exit_item), "activate", quit_event_handler, NULL);
 		gtk_signal_connect(GTK_OBJECT(file_new_item), "activate", new_event_handler, NULL);
 		gtk_signal_connect(GTK_OBJECT(file_open_item), "activate", open_event_handler, NULL);
-		gtk_signal_connect(GTK_OBJECT(options_font_item), "activate", change_font_event_handler, td);
 
 		/* Build the menu bar */
 		gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), file_item);
@@ -688,7 +656,6 @@ static void init_gtk_window(term_data *td, int i)
 		gtk_menu_append(GTK_MENU(file_menu), file_open_item);
 		gtk_menu_append(GTK_MENU(file_menu), seperator_item);
 		gtk_menu_append(GTK_MENU(file_menu), file_exit_item);
-		gtk_menu_append(GTK_MENU(options_menu), options_font_item);
 
 		/* Pack the menu bar */
 		gtk_box_pack_start(GTK_BOX(box), menu_bar, FALSE, FALSE, NO_PADDING);
