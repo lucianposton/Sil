@@ -24,6 +24,7 @@
 #define CLASS_COL		17
 #define CLASS_AUX_COL   31
 #define TOTAL_AUX_COL   43
+#define QUIT_CHOICE 254
 #define INVALID_CHOICE 255
 
 /*
@@ -860,7 +861,7 @@ static int get_player_choice(birth_menu *choices, int num, int def, int col, int
 		hide_cursor = FALSE;
 
 		/* Exit the game */
-		if ((c == 'Q') || (c == 'q'))	quit(NULL);
+		if ((c == 'Q') || (c == 'q'))	return (QUIT_CHOICE);
 
 		/* Hack - go back */
 		if ((c == ESCAPE)|| (c == '4')) return (INVALID_CHOICE);
@@ -1183,7 +1184,7 @@ static void race_aux_hook(birth_menu r_str)
 /*
  * Player race
  */
-static bool get_player_race(void)
+static int get_player_race(void)
 {
 	int i;
 	birth_menu *races;
@@ -1206,9 +1207,9 @@ static bool get_player_race(void)
 	race = get_player_choice(races, z_info->p_max, p_ptr->prace, RACE_COL, 15, race_aux_hook);
 
 	/* No selection? */
-	if (race == INVALID_CHOICE)
+	if (race == INVALID_CHOICE || race == QUIT_CHOICE)
 	{
-		return (FALSE);
+		return race;
 	}
 
 	// if different race to last time, then wipe the history, age, height, weight
@@ -1232,7 +1233,7 @@ static bool get_player_race(void)
 	FREE(races);
 
 	/* Success */
-	return (TRUE);
+	return (0);
 }
 
 /*
@@ -1286,7 +1287,7 @@ static void house_aux_hook(birth_menu c_str)
 /*
  * Player house
  */
-static bool get_player_house(void)
+static int get_player_house(void)
 {
 	int i;
 	int house = 0;
@@ -1326,9 +1327,9 @@ static bool get_player_house(void)
 	house_choice = get_player_choice(houses, house, old_house_choice, CLASS_COL, 22, house_aux_hook);
 
 	/* No selection? */
-	if (house_choice == INVALID_CHOICE)
+	if (house_choice == INVALID_CHOICE || house_choice == QUIT_CHOICE)
 	{
-		return (FALSE);
+		return house_choice;
 	}
 
 	/* Get house from choice number */
@@ -1365,7 +1366,7 @@ static bool get_player_house(void)
 
 	FREE(houses);
 
-	return (TRUE);
+	return (0);
 }
 
 
@@ -1375,7 +1376,7 @@ static bool get_player_house(void)
  * This function allows the player to select a sex, race, and house, and
  * modify options (including the birth options).
  */
-static bool player_birth_aux_1(void)
+static int player_birth_aux_1(void)
 {
 	int i, j;
 
@@ -1425,10 +1426,15 @@ static bool player_birth_aux_1(void)
 		if (phase == 1)
 		{
 			/* Choose the player's race */
-			if (!get_player_race())
+			const int race_choice = get_player_race();
+			if (race_choice == INVALID_CHOICE)
 			{
 				continue;
 			}
+            else if (race_choice == QUIT_CHOICE)
+            {
+                return QUIT_CHOICE;
+            }
 
 			/* Clean up */
 			clear_question();
@@ -1440,11 +1446,16 @@ static bool player_birth_aux_1(void)
 		if (phase == 2)
 		{
 			/* Choose the player's house */
-			if (!get_player_house())
+			const int house_choice = get_player_house();
+			if (house_choice == INVALID_CHOICE)
 			{
 				phase--;
 				continue;
 			}
+            else if (house_choice == QUIT_CHOICE)
+            {
+                return QUIT_CHOICE;
+            }
 
 			/* Clean up */
 			clear_question();
@@ -1508,7 +1519,7 @@ static bool player_birth_aux_1(void)
 	Term_clear();
 
 	/* Done */
-	return (TRUE);
+	return (0);
 }
 
 
@@ -1897,34 +1908,42 @@ extern bool gain_skills(void)
  *
  * See "display_player" for screen layout code.
  */
-static bool player_birth_aux(void)
+static int player_birth_aux(void)
 {
 	/* Ask questions */
-	if (!player_birth_aux_1()) return (FALSE);
+	const int birth_aux_1_result = player_birth_aux_1();
+	if (birth_aux_1_result == INVALID_CHOICE)
+    {
+        return (INVALID_CHOICE);
+    }
+    else if (birth_aux_1_result == QUIT_CHOICE)
+    {
+        return (QUIT_CHOICE);
+    }
 
 	/* Point-based stats */
-	if (!player_birth_aux_2()) return (FALSE);
+	if (!player_birth_aux_2()) return (INVALID_CHOICE);
 
 	/* Point-based skills */
-	if (!gain_skills()) return (FALSE);
+	if (!gain_skills()) return (INVALID_CHOICE);
 
 	/* Choose sex */
-	if (!get_sex()) return (FALSE);
+	if (!get_sex()) return (INVALID_CHOICE);
 
 	/* Roll for history */
-	if (!get_history()) return (FALSE);
+	if (!get_history()) return (INVALID_CHOICE);
 
 	/* Roll for age/height/weight */
-	if (!get_ahw()) return (FALSE);
+	if (!get_ahw()) return (INVALID_CHOICE);
 
 	/* Get a name, prepare savefile */
-	if (!get_name()) return (FALSE);
+	if (!get_name()) return (INVALID_CHOICE);
 
 	// Reset the number of artefacts
 	p_ptr->artefacts = 0;
 
 	/* Accept */
-	return (TRUE);
+	return (0);
 }
 
 /*
@@ -1933,7 +1952,7 @@ static bool player_birth_aux(void)
  * Note that we may be called with "junk" leftover in the various
  * fields, so we must be sure to clear them first.
  */
-void player_birth()
+bool player_birth()
 {
 	int i;
 
@@ -1949,7 +1968,19 @@ void player_birth()
 		player_wipe();
 
 		/* Roll up a new character */
-		if (player_birth_aux()) break;
+		const int birth_result = player_birth_aux();
+		if (birth_result == INVALID_CHOICE)
+        {
+            continue;
+        }
+        else if (birth_result == QUIT_CHOICE)
+        {
+            return FALSE;
+        }
+        else
+        {
+            break;
+        }
 	}
 
 	for (i = 0; i < NOTES_LENGTH; i++)
@@ -1982,4 +2013,5 @@ void player_birth()
 	/* Hack -- outfit the player */
 	player_outfit();
 
+    return TRUE;
 }

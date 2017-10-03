@@ -3008,7 +3008,10 @@ void play_game(bool new_game)
 		seed_randart = rand_int(0x10000000);
 
 		/* Roll up a new character */
-		player_birth();
+		if (!player_birth())
+        {
+            return;
+        }
 		
 		/* Randomize the artefacts */
 		if (adult_rand_artefacts)
