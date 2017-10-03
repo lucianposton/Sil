@@ -1681,6 +1681,12 @@ static bool parse_macro = FALSE;
 static bool parse_under = FALSE;
 
 
+void clear_pending_macro(void)
+{
+    parse_macro = FALSE;
+    parse_under = FALSE;
+}
+
 
 
 /*

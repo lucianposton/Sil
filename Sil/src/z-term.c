@@ -1860,6 +1860,7 @@ errr Term_flush(void)
 
 	/* Forget all keypresses */
 	Term->key_head = Term->key_tail = 0;
+	clear_pending_macro();
 
 	/* Success */
 	return (0);
